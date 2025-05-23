@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "3880317167",
+    "project_id": "demomusic-3fe01",
+    "storage_bucket": "demomusic-3fe01.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:3880317167:android:c175f2cac164b3f064ab1a",
+        "android_client_info": {
+          "package_name": "com.example.demotestapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD0GoAMHhd3p3uHrsOPx_3yLEspr2CcF-g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:3880317167:android:4b1298a6bb77179b64ab1a",
+        "android_client_info": {
+          "package_name": "com.example.music_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD0GoAMHhd3p3uHrsOPx_3yLEspr2CcF-g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
