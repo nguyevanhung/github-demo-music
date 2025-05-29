@@ -8,12 +8,22 @@ class AppLocalizations {
       'logout': 'Đăng xuất',
       'theme': 'Chủ đề',
       'language': 'Ngôn ngữ',
+      'home': 'Trang chủ',
+      'discovery': 'Khám phá',
+      'account': 'Tài khoản',
+      'search_hint': 'Tìm kiếm bài hát hoặc tác giả...',
+      'not_found': 'Không tìm thấy bài hát nào',
     },
     'en': {
       'settings': 'Settings',
       'logout': 'Logout',
       'theme': 'Theme',
       'language': 'Language',
+      'home': 'Home',
+      'discovery': 'Discovery',
+      'account': 'Account',
+      'search_hint': 'Search for songs or artists...',
+      'not_found': 'No songs found',
     },
   };
 

@@ -12,18 +12,18 @@ class AudioPlayerManager {
 
   void prepare({bool isNewSong = false}) async {
     durationState = Rx.combineLatest2<Duration, PlaybackEvent, DurationState>(
-      player.positionStream,
-      player.playbackEventStream,
-        (position , playbackEvent) => DurationState(progress: position,
+        player.positionStream,
+        player.playbackEventStream,
+        (position, playbackEvent) => DurationState(
+            progress: position,
             total: playbackEvent.duration,
-            buffered: playbackEvent.bufferedPosition)
-    );
-    if(isNewSong){
+            buffered: playbackEvent.bufferedPosition));
+    if (isNewSong) {
       player.setUrl(songUrl);
     }
   }
 
-  void updateSongUrl(String url){
+  void updateSongUrl(String url) {
     songUrl = url;
     prepare();
   }
@@ -32,8 +32,6 @@ class AudioPlayerManager {
     player.dispose();
   }
 }
-
-
 
 class DurationState {
   const DurationState({

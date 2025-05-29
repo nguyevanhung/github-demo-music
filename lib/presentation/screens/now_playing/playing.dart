@@ -5,7 +5,7 @@ import 'package:music_app/presentation/screens/discovery/favorite.dart';
 import 'package:music_app/data/model/song.dart';
 import 'package:music_app/presentation/screens/now_playing/audio_player_manager.dart';
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
-import 'package:music_app/core/theme/theme.dart'; // Thêm dòng này
+import 'package:music_app/core/theme/theme.dart';
 
 class NowPlaying extends StatelessWidget {
   const NowPlaying({
@@ -62,10 +62,10 @@ class _NowPlayingPageState extends State<NowPlayingPage>
       duration: const Duration(milliseconds: 12000),
     );
     _audioPlayerManager = AudioPlayerManager();
-    if(_audioPlayerManager.songUrl.compareTo(_song.source) != 0){
+    if (_audioPlayerManager.songUrl.compareTo(_song.source) != 0) {
       _audioPlayerManager.updateSongUrl(_song.source);
       _audioPlayerManager.prepare(isNewSong: true);
-    }else{
+    } else {
       _audioPlayerManager.prepare(isNewSong: false);
     }
     _selectedItemIndex = widget.songs.indexOf(widget.playingSong);
@@ -80,6 +80,11 @@ class _NowPlayingPageState extends State<NowPlayingPage>
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final bgColor = theme.scaffoldBackgroundColor;
+    final primaryColor = theme.primaryColor;
+    final textColor = theme.textTheme.titleLarge?.color ?? Colors.black;
+
     final screenWidth = MediaQuery.of(context).size.width;
     const delta = 64.0;
     final radius = (screenWidth - delta) / 2;
@@ -88,30 +93,35 @@ class _NowPlayingPageState extends State<NowPlayingPage>
       navigationBar: CupertinoNavigationBar(
         middle: const Text('Now Playing'),
         backgroundColor: AppColors.primary,
-        
         trailing: IconButton(
           icon: const Icon(Icons.more_horiz),
           onPressed: () {},
         ),
       ),
       child: Scaffold(
-        backgroundColor: AppColors.white, // Container background
+        backgroundColor: bgColor, // Sử dụng màu nền theo theme
         body: SafeArea(
-          top: false, // Để không bị trùng với CupertinoNavigationBar
+          top: false,
           child: Center(
             child: SingleChildScrollView(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const SizedBox(height: 32), // Đẩy toàn bộ nội dung xuống thấp hơn
+                  const SizedBox(height: 32),
                   // Album
-                  Text(
-                    _song.album,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          color: AppColors.primary, // Thay vì Colors.deepPurple
-                          fontWeight: FontWeight.bold,
-                        ),
-                    textAlign: TextAlign.center,
+                  AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 500),
+                    transitionBuilder: (child, animation) =>
+                        FadeTransition(opacity: animation, child: child),
+                    child: Text(
+                      _song.album,
+                      key: ValueKey(_song.album),
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        color: primaryColor,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
                   ),
                   const SizedBox(height: 8),
                   // Divider
@@ -119,41 +129,48 @@ class _NowPlayingPageState extends State<NowPlayingPage>
                     width: 80,
                     height: 3,
                     decoration: BoxDecoration(
-                      color: AppColors.primary.withOpacity(0.2),
+                      color: primaryColor.withOpacity(0.2),
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
                   const SizedBox(height: 32),
-                  // Album Art with shadow
-                  Container(
-                    decoration: BoxDecoration(
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.primary.withOpacity(0.2),
-                          blurRadius: 24,
-                          offset: const Offset(0, 8),
-                        ),
-                      ],
-                      borderRadius: BorderRadius.circular(radius),
-                    ),
-                    child: RotationTransition(
-                      turns: Tween(begin: 0.0, end: 1.0).animate(_imageAnimController),
-                      child: ClipRRect(
+                  // Album Art with shadow + AnimatedSwitcher
+                  AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 500),
+                    transitionBuilder: (child, animation) =>
+                        ScaleTransition(scale: animation, child: child),
+                    child: Container(
+                      key: ValueKey(_song.image),
+                      decoration: BoxDecoration(
+                        boxShadow: [
+                          BoxShadow(
+                            color: primaryColor.withOpacity(0.2),
+                            blurRadius: 24,
+                            offset: const Offset(0, 8),
+                          ),
+                        ],
                         borderRadius: BorderRadius.circular(radius),
-                        child: FadeInImage.assetNetwork(
-                          placeholder: 'assets/images/itunes.png',
-                          image: _song.image,
-                          width: screenWidth - delta,
-                          height: screenWidth - delta,
-                          fit: BoxFit.cover,
-                          imageErrorBuilder: (context, error, stackTrace) {
-                            return Image.asset(
-                              'assets/images/itunes.png',
-                              width: screenWidth - delta,
-                              height: screenWidth - delta,
-                              fit: BoxFit.cover,
-                            );
-                          },
+                      ),
+                      child: RotationTransition(
+                        turns: Tween(begin: 0.0, end: 1.0)
+                            .animate(_imageAnimController),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(radius),
+                          child: FadeInImage.assetNetwork(
+                            placeholder: 'assets/itunes.png',
+                            image: _song.image,
+                            width: screenWidth - delta,
+                            height: screenWidth - delta,
+                            fit: BoxFit.cover,
+                            imageErrorBuilder: (context, error, stackTrace) {
+                              return Image.asset(
+                                'assets/itunes.png',
+                                width: screenWidth - delta,
+                                height: screenWidth - delta,
+                                fit: BoxFit.cover,
+                              );
+                            },
+                          ),
                         ),
                       ),
                     ),
@@ -162,65 +179,79 @@ class _NowPlayingPageState extends State<NowPlayingPage>
                   // Song title, artist, favorite
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24),
-                    child: Column(
-                      children: [
-                        Text(
-                          _song.title,
-                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.text, // Thay vì Colors.black87
-                              ),
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          _song.artist,
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                color: Colors.grey[700], // Có thể thêm vào AppColors nếu muốn
-                              ),
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(height: 16),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            IconButton(
-                              onPressed: () {
-                                setState(() {
-                                  FavoriteManager().toggleFavorite(_song);
-                                });
-                              },
-                              icon: Icon(
-                                FavoriteManager().isFavorite(_song)
-                                    ? Icons.favorite
-                                    : Icons.favorite_outline,
-                              ),
-                              color: FavoriteManager().isFavorite(_song)
-                                  ? AppColors.error
-                                  : AppColors.primary,
-                              iconSize: 32,
+                    child: AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 500),
+                      transitionBuilder: (child, animation) => SlideTransition(
+                        position: Tween<Offset>(
+                          begin: const Offset(0.0, 0.3),
+                          end: Offset.zero,
+                        ).animate(animation),
+                        child: FadeTransition(opacity: animation, child: child),
+                      ),
+                      child: Column(
+                        key: ValueKey(_song.title + _song.artist),
+                        children: [
+                          Text(
+                            _song.title,
+                            style: theme.textTheme.titleLarge?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: textColor,
                             ),
-                            const SizedBox(width: 16),
-                            IconButton(
-                              onPressed: () {},
-                              icon: const Icon(Icons.share_outlined),
-                              color: AppColors.primary,
-                              iconSize: 28,
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            _song.artist,
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: theme.textTheme.bodyMedium?.color
+                                  ?.withOpacity(0.7),
                             ),
-                          ],
-                        ),
-                      ],
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 16),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              IconButton(
+                                onPressed: () {
+                                  setState(() {
+                                    FavoriteManager().toggleFavorite(_song);
+                                  });
+                                },
+                                icon: Icon(
+                                  FavoriteManager().isFavorite(_song)
+                                      ? Icons.favorite
+                                      : Icons.favorite_outline,
+                                ),
+                                color: FavoriteManager().isFavorite(_song)
+                                    ? AppColors.error
+                                    : AppColors.primary,
+                                iconSize: 32,
+                              ),
+                              const SizedBox(width: 16),
+                              IconButton(
+                                onPressed: () {},
+                                icon: const Icon(Icons.share_outlined),
+                                color: AppColors.primary,
+                                iconSize: 28,
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                   const SizedBox(height: 24),
                   // Progress bar
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
                     child: _progressBar(),
                   ),
                   // Media buttons
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
                     child: _mediaButtons(),
                   ),
                   const SizedBox(height: 24),
@@ -353,20 +384,25 @@ class _NowPlayingPageState extends State<NowPlayingPage>
   }
 
   void _setShuffle() {
-      setState(() {
-        _isShuffle = !_isShuffle;
-      });
+    setState(() {
+      _isShuffle = !_isShuffle;
+    });
   }
+
   Color? get _getShuffleColor => _isShuffle ? AppColors.primary : Colors.grey;
 
-  void _setNextSong() {
+  void _setNextSong() async {
     if (_selectedItemIndex < widget.songs.length - 1) {
+      // Dừng bài cũ trước khi chuyển bài mới
+      await _audioPlayerManager.player.stop();
       _selectedItemIndex++;
       final nextSong = widget.songs[_selectedItemIndex];
       _audioPlayerManager.updateSongUrl(nextSong.source);
       setState(() {
         _song = nextSong;
       });
+      await _audioPlayerManager.prepare(isNewSong: true);
+      _audioPlayerManager.player.play();
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _resetRotationAnim();
         _playRotationAnim();
@@ -374,22 +410,27 @@ class _NowPlayingPageState extends State<NowPlayingPage>
     }
   }
 
-  void _setPrevSong() {
+  void _setPrevSong() async {
     if (_selectedItemIndex > 0) {
+      // Dừng bài cũ trước khi chuyển bài mới
+      await _audioPlayerManager.player.stop();
       _selectedItemIndex--;
       final prevSong = widget.songs[_selectedItemIndex];
       _audioPlayerManager.updateSongUrl(prevSong.source);
       setState(() {
         _song = prevSong;
       });
+      await _audioPlayerManager.prepare(isNewSong: true);
+      _audioPlayerManager.player.play();
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _resetRotationAnim();
         _playRotationAnim();
       });
     }
   }
-  IconData _repeatingIcon (){
-    return switch(_loopMode){
+
+  IconData _repeatingIcon() {
+    return switch (_loopMode) {
       LoopMode.one => Icons.repeat_one,
       LoopMode.all => Icons.repeat,
       _ => Icons.repeat,
@@ -409,7 +450,7 @@ class _NowPlayingPageState extends State<NowPlayingPage>
     });
   }
 
-  Color? _getRepeatingIconColor(){
+  Color? _getRepeatingIconColor() {
     return _loopMode == LoopMode.off ? Colors.grey : AppColors.primary;
   }
 

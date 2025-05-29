@@ -5,8 +5,7 @@ class GoogleSignInHelper {
   static Future<UserCredential?> signInWithGoogle() async {
     try {
       final googleUser = await GoogleSignIn().signIn();
-      if (googleUser == null) return null; // Người dùng hủy
-
+      if (googleUser == null) return null;
       final googleAuth = await googleUser.authentication;
       final credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,

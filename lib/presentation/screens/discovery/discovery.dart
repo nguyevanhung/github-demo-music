@@ -36,14 +36,14 @@ class _DiscoveryTabState extends State<DiscoveryTab> {
                 leading: ClipRRect(
                   borderRadius: BorderRadius.circular(16),
                   child: FadeInImage.assetNetwork(
-                    placeholder: 'assets/images/itunes.png',
+                    placeholder: 'assets/itunes.png',
                     image: song.image,
                     width: 56,
                     height: 56,
                     fit: BoxFit.cover,
                     imageErrorBuilder: (context, error, stackTrace) {
                       return Image.asset(
-                        'assets/images/itunes.png',
+                        'assets/itunes.png',
                         width: 56,
                         height: 56,
                         fit: BoxFit.cover,

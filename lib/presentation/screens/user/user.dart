@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:music_app/core/theme/theme.dart';
 
 class AccountTab extends StatefulWidget {
   const AccountTab({super.key});
@@ -89,7 +90,8 @@ class _AccountTabState extends State<AccountTab> {
       final newPassword = newPassController.text.trim();
       if (oldPassword.isEmpty || newPassword.length < 6) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Vui lòng nhập đủ và mật khẩu mới từ 6 ký tự.")),
+          const SnackBar(
+              content: Text("Vui lòng nhập đủ và mật khẩu mới từ 6 ký tự.")),
         );
         return;
       }
@@ -120,8 +122,8 @@ class _AccountTabState extends State<AccountTab> {
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         title: const Text("Tài khoản"),
-        backgroundColor: theme.primaryColor,
-        foregroundColor: theme.appBarTheme.foregroundColor ?? Colors.white,
+        backgroundColor: AppColors.primary,
+        foregroundColor: AppColors.white,
         elevation: 2,
       ),
       body: SafeArea(
@@ -133,15 +135,15 @@ class _AccountTabState extends State<AccountTab> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  // Avatar
                   CircleAvatar(
                     radius: 48,
                     backgroundImage: user.photoURL != null
                         ? NetworkImage(user.photoURL!)
-                        : const AssetImage('assets/avatar.png') as ImageProvider,
+                        : const AssetImage('assets/avatar.png')
+                            as ImageProvider,
                   ),
                   const SizedBox(height: 16),
-                  // Display Name (click để đổi)
+
                   ListTile(
                     title: Text(
                       user.displayName ?? "User",
@@ -158,10 +160,12 @@ class _AccountTabState extends State<AccountTab> {
                     title: Text(
                       user.email ?? "",
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.textTheme.bodyMedium?.color?.withOpacity(0.7),
+                        color:
+                            theme.textTheme.bodyMedium?.color?.withOpacity(0.7),
                       ),
                     ),
-                    trailing: Icon(Icons.info_outline, color: theme.primaryColor),
+                    trailing:
+                        Icon(Icons.info_outline, color: theme.primaryColor),
                     onTap: () {
                       showDialog(
                         context: context,

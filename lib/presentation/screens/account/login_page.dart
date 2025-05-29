@@ -73,9 +73,7 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
   Future<void> _signInWithGoogle(BuildContext context) async {
     try {
       final userCredential = await GoogleSignInHelper.signInWithGoogle();
-      if (userCredential == null) return; // Người dùng hủy
-      // Nếu dùng Bloc, Bloc sẽ tự chuyển sang trang chính
-      // Nếu không, bạn có thể điều hướng ở đây nếu muốn
+      if (userCredential == null) return; 
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Đăng nhập Google thất bại: $e")),
